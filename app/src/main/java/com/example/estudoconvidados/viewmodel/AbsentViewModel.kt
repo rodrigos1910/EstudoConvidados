@@ -1,4 +1,4 @@
-package com.example.estudoconvidados.ui.slideshow
+package com.example.estudoconvidados.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

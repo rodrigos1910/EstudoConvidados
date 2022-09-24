@@ -1,13 +1,13 @@
-package com.example.estudoconvidados.ui.gallery
+package com.example.estudoconvidados.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class PresentViewModel : ViewModel() {
+class AllGuestViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is gallery Fragment"
+        value = "This is home Fragment"
     }
     val text: LiveData<String> = _text
 }
