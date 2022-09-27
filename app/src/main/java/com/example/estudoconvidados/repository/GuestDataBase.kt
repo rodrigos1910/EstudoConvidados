@@ -1,27 +1,46 @@
 package com.example.estudoconvidados.repository
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
-import com.example.estudoconvidados.constants.DataBaseConstants
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.estudoconvidados.model.GuestModel
 
-class GuestDataBase(
-    context: Context
-) : SQLiteOpenHelper(context, NAME, null, VERSION) {
 
+
+@Database(entities = [GuestModel::class], version = 1)
+abstract class GuestDataBase() : RoomDatabase() {
+
+
+    abstract fun guestDAO(): GuestDAO
 
     companion object {
-        private const val NAME = "guestdb"
-        private const val VERSION = 1
-    }
 
-    override fun onCreate(db: SQLiteDatabase) {
-        //criacao do banco de dado
-        db.execSQL("create table " + DataBaseConstants.GUEST.TABLE_NAME + "(" + DataBaseConstants.GUEST.COLUMNS.ID + " integer primary key autoincrement, " + DataBaseConstants.GUEST.COLUMNS.NAME + " text, " + DataBaseConstants.GUEST.COLUMNS.PRESENCE + " integer);")
+        //syngleton
+        private lateinit var instance: GuestDataBase
 
-    }
+        fun getDataBase(context: Context) : GuestDataBase{
+            if (!::instance.isInitialized){
+                synchronized(GuestDataBase::class){ //evita que treads executem a instancia ao mesmo tempo
+                    instance = return androidx.room.Room.databaseBuilder(context, GuestDataBase::class.java, "guestdb")
+                        .addMigrations(MIGRATION_1_2) //adiciona a opção de scripts para atualizações de versões
+                        .allowMainThreadQueries()
+                        .build()
+                }
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+            }
+
+            return instance
+        }
+
+
+        private val MIGRATION_1_2: Migration = object : Migration(1,2){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DELETE FROM Guest")
+            }
+
+        }
 
     }
 
